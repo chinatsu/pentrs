@@ -40,7 +40,10 @@ pub struct Piece {
     pub orientation: usize,
     pub origin: Point,
     pub next_piece: [[Point; 5]; 4],
-    pub next_id: i32
+    pub next_id: i32,
+    pub hold: bool,
+    pub held_piece: [[Point; 5]; 4],
+    pub held_id: i32
 }
 
 impl Piece {
@@ -56,7 +59,10 @@ impl Piece {
             orientation: 0,
             origin: Point{x: 6.0, y: 1.0},
             next_piece: PIECES[next_choice],
-            next_id: next_choice as i32 + 1
+            next_id: next_choice as i32 + 1,
+            hold: false,
+            held_piece: [[Point{x: 0.0, y: 0.0}; 5]; 4],
+            held_id: 0
         }
     }
 
@@ -76,6 +82,18 @@ impl Piece {
             let y = next_area.y + (i.y * CELL_SIZE);
             let s = rectangle::square(x, y, CELL_SIZE);
             rectangle(get_color(self.next_id), s, c.transform, gl);
+        }
+    }
+
+    pub fn draw_held(&mut self, c: graphics::Context, gl: &mut opengl_graphics::GlGraphics) {
+        if self.hold {
+            let hold_area = Point{x: 480.0, y: 350.0};
+            for i in self.held_piece[0].iter() {
+                let x = hold_area.x + (i.x * CELL_SIZE);
+                let y = hold_area.y + (i.y * CELL_SIZE);
+                let s = rectangle::square(x, y, CELL_SIZE);
+                rectangle(get_color(self.held_id), s, c.transform, gl);
+            }
         }
     }
 
@@ -189,6 +207,33 @@ impl Piece {
         self.next_piece = PIECES[choice];
         self.origin = Point{x: 6.0, y: 1.0};
         self.orientation = 0;
+    }
+
+    pub fn hold_piece(&mut self) {
+        if self.hold {
+            let piece = self.piece;
+            let id = self.id;
+            self.piece = self.held_piece;
+            self.id = self.held_id;
+            self.held_piece = piece;
+            self.held_id = id;
+            self.origin = Point{x: 6.0, y: 1.0};
+            self.orientation = 0;
+        } else {
+            self.hold = true;
+            let mut weights = &mut WEIGHTS;
+            let wc = WeightedChoice::new(weights);
+            let mut rng = rand::thread_rng();
+            let choice = wc.ind_sample(&mut rng);
+            self.held_piece = self.piece;
+            self.held_id = self.id;
+            self.piece = self.next_piece;
+            self.id = self.next_id;
+            self.next_piece = PIECES[choice];
+            self.next_id = choice as i32 + 1;
+            self.origin = Point{x: 6.0, y: 1.0};
+            self.orientation = 0;
+        }
     }
 }
 

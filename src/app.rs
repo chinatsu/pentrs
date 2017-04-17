@@ -51,7 +51,7 @@ impl App {
             }
 
             matrix.draw(c, gl);
-            let mut text_string = String::new();
+            let mut text_string = format!("Lines: {} ", matrix.cleared);
             if inputstate.left {
                 text_string += "left! ";
             }
@@ -63,6 +63,7 @@ impl App {
             }
             text.draw(&text_string, use_cache, &c.draw_state, text_transform.transform, gl);
             piece.draw_next(c, gl);
+            piece.draw_held(c, gl);
             piece.draw_ghost(matrix, c, gl);
             piece.draw(c, gl);
         });
@@ -119,6 +120,9 @@ impl App {
             }
             Key::C => {
                 self.piece.rotate(&mut self.matrix, 2);
+            }
+            Key::LShift => {
+                self.piece.hold_piece();
             }
             _ => {}
         }

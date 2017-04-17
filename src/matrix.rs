@@ -10,13 +10,15 @@ pub const HEIGHT: usize = 25;
 
 
 pub struct Matrix {
-    pub state: [[i32; WIDTH]; HEIGHT]
+    pub state: [[i32; WIDTH]; HEIGHT],
+    pub cleared: u64
 }
 
 impl Matrix {
     pub fn new() -> Matrix {
         Matrix {
-            state: [[0; WIDTH]; HEIGHT]
+            state: [[0; WIDTH]; HEIGHT],
+            cleared: 0
         }
     }
 
@@ -30,6 +32,7 @@ impl Matrix {
                 }
             }
             if count == WIDTH {
+                self.cleared += 1;
                 for temp_row in (0..row).rev() {
                     self.state[temp_row + 1] = self.state[temp_row];
                 }
