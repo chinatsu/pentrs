@@ -1,0 +1,14 @@
+[package]
+name = "pentrs"
+version = "0.1.0"
+authors = ["chinatsu <lolexplode@gmail.com>"]
+
+[dependencies]
+piston = "0.31.1"
+piston2d-graphics = "0.21.1"
+pistoncore-glutin_window = "0.35.0"
+piston2d-opengl_graphics = "0.42.0"
+rustc-serialize = "0.3"
+toml-config = "0.2"
+find_folder = "*"
+rand = "0.3.15"
