@@ -52,15 +52,6 @@ impl App {
 
             matrix.draw(c, gl);
             let mut text_string = format!("Lines: {} ", matrix.cleared);
-            if inputstate.left {
-                text_string += "left! ";
-            }
-            if inputstate.right {
-                text_string += "right! ";
-            }
-            if inputstate.das_left > 0.12 || inputstate.das_right > 0.12 {
-                text_string += "das!";
-            }
             text.draw(&text_string, use_cache, &c.draw_state, text_transform.transform, gl);
             piece.draw_next(c, gl);
             piece.draw_held(c, gl);
