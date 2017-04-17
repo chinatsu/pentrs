@@ -83,7 +83,8 @@ impl Piece {
         let real_origin = self.origin;
         let mut x = self.origin.x;
         let mut y = self.origin.y;
-        while self.can_move(m, Point{x: x, y: y + 1.0}) {
+        let orientation = self.orientation;
+        while self.valid_position(m, orientation, Point{x: x, y: y + 1.0}) {
             x = self.origin.x;
             y = self.origin.y;
             self.move_piece(m, Point{x: 0.0, y: 1.0});
@@ -97,10 +98,10 @@ impl Piece {
         self.origin = real_origin;
     }
 
-    pub fn rotate(&mut self, m: &Matrix, val: usize) {
+    pub fn rotate(&mut self, m: &mut Matrix, val: usize) {
         let new_orientation = (self.orientation + val) % self.piece.len();
         let mut new_origin = self.origin;
-        if self.can_rotate(m, new_orientation, new_origin) {
+        if self.valid_position(m, new_orientation, new_origin) {
             self.orientation = new_orientation;
             self.origin = new_origin;
             return;
@@ -119,7 +120,7 @@ impl Piece {
         ];
         for check in rotate_checks.iter() {
             new_origin = self.origin + check.clone();
-            if self.can_rotate(m, new_orientation, new_origin) {
+            if self.valid_position(m, new_orientation, new_origin) {
                 self.orientation = new_orientation;
                 self.origin = new_origin;
                 return;
@@ -127,35 +128,19 @@ impl Piece {
         }
     }
 
-    fn can_rotate(&mut self, m: &Matrix, orientation: usize, origin: Point) -> bool {
-        for i in self.piece[orientation].iter() {
-            let x = i.x + origin.x;
-            let y = i.y + origin.y;
-            if x > WIDTH as f64 - 1.0 ||
-            x < 0.0 ||
-            y > HEIGHT as f64 - 1.0 ||
-            y < 0.0 {
-                return false;
-            }
-            if m.state[y as usize][x as usize] != 0 {
-                return false;
-            }
-        }
-        return true;
-    }
-
     pub fn move_piece(&mut self, m: &mut Matrix, val: Point) {
         let new_origin = Point{
             x: self.origin.x + val.x,
             y: self.origin.y + val.y
         };
-        if self.can_move(m, new_origin) {
+        let orientation = self.orientation;
+        if self.valid_position(m, orientation, new_origin) {
             self.origin = new_origin
         }
     }
 
-    fn can_move(&mut self, m: &mut Matrix, origin: Point) -> bool {
-        for i in self.piece[self.orientation].iter() {
+    fn valid_position(&mut self, m: &mut Matrix, orientation: usize, origin: Point) -> bool {
+        for i in self.piece[orientation].iter() {
             let x = i.x + origin.x;
             let y = i.y + origin.y;
             if x > WIDTH as f64 - 1.0 ||
@@ -174,7 +159,8 @@ impl Piece {
     pub fn hard_drop(&mut self, m: &mut Matrix) {
         let mut x = self.origin.x;
         let mut y = self.origin.y;
-        while self.can_move(m, Point{x: x, y: y + 1.0}) {
+        let orientation = self.orientation;
+        while self.valid_position(m, orientation, Point{x: x, y: y + 1.0}) {
             x = self.origin.x;
             y = self.origin.y;
             self.move_piece(m, Point{x: 0.0, y: 1.0});

@@ -112,13 +112,13 @@ impl App {
                 self.input.right = false;
             }
             Key::X => {
-                self.piece.rotate(&self.matrix, 1);
+                self.piece.rotate(&mut self.matrix, 1);
             }
             Key::Z => {
-                self.piece.rotate(&self.matrix, 3);
+                self.piece.rotate(&mut self.matrix, 3);
             }
             Key::C => {
-                self.piece.rotate(&self.matrix, 2);
+                self.piece.rotate(&mut self.matrix, 2);
             }
             _ => {}
         }
