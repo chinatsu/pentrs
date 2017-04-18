@@ -42,8 +42,9 @@ pub struct Piece {
     pub next_piece: [[Point; 5]; 4],
     pub next_id: i32,
     pub hold: bool,
+    pub has_held: bool,
     pub held_piece: [[Point; 5]; 4],
-    pub held_id: i32
+    pub held_id: i32,
 }
 
 impl Piece {
@@ -61,6 +62,7 @@ impl Piece {
             next_piece: PIECES[next_choice],
             next_id: next_choice as i32 + 1,
             hold: false,
+            has_held: false,
             held_piece: [[Point{x: 0.0, y: 0.0}; 5]; 4],
             held_id: 0
         }
@@ -193,6 +195,9 @@ impl Piece {
             m.state[y as usize][x as usize] = self.id;
         }
         m.clear_lines();
+        if self.has_held {
+            self.has_held = false;
+        }
         self.spawn_piece();
     }
 
@@ -210,6 +215,9 @@ impl Piece {
     }
 
     pub fn hold_piece(&mut self) {
+        if self.has_held {
+            return
+        }
         if self.hold {
             let piece = self.piece;
             let id = self.id;
@@ -219,6 +227,7 @@ impl Piece {
             self.held_id = id;
             self.origin = Point{x: 6.0, y: 1.0};
             self.orientation = 0;
+            self.has_held = true;
         } else {
             self.hold = true;
             let mut weights = &mut WEIGHTS;
@@ -233,6 +242,7 @@ impl Piece {
             self.next_id = choice as i32 + 1;
             self.origin = Point{x: 6.0, y: 1.0};
             self.orientation = 0;
+            self.has_held = true;
         }
     }
 }
