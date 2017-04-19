@@ -78,7 +78,7 @@ impl Piece {
     }
 
     pub fn draw_next(&mut self, c: graphics::Context, gl: &mut opengl_graphics::GlGraphics) {
-        let next_area = Point{x: 480.0, y: 200.0};
+        let next_area = Point{x: 14.0 * CELL_SIZE, y: 3.0 * CELL_SIZE};
         for i in self.next_piece[0].iter() {
             let x = next_area.x + (i.x * CELL_SIZE);
             let y = next_area.y + (i.y * CELL_SIZE);
@@ -89,7 +89,7 @@ impl Piece {
 
     pub fn draw_held(&mut self, c: graphics::Context, gl: &mut opengl_graphics::GlGraphics) {
         if self.hold {
-            let hold_area = Point{x: 480.0, y: 350.0};
+            let hold_area = Point{x: -3.0 * CELL_SIZE, y: 2.0 * CELL_SIZE};
             for i in self.held_piece[0].iter() {
                 let x = hold_area.x + (i.x * CELL_SIZE);
                 let y = hold_area.y + (i.y * CELL_SIZE);

@@ -3,7 +3,7 @@ extern crate opengl_graphics;
 use graphics::*;
 use piece;
 
-pub const CELL_SIZE: f64 = 32.0;
+pub const CELL_SIZE: f64 = 24.0;
 pub const WIDTH: usize = 12;
 pub const HEIGHT: usize = 25;
 //pub const HIDDEN: usize = 7;

@@ -28,35 +28,36 @@ impl App {
 
         let mut lines: Vec<[f64; 4]> = vec![];
         let mut columns: Vec<[f64; 4]> = vec![];
-        for x in 0..(args.height/32) {
+        for x in 0..(args.height/CELL_SIZE as u32) {
             if x < (WIDTH + 1) as u32 {
                 columns.push([x as f64 * CELL_SIZE, 0.0, x as f64 * CELL_SIZE, args.height as f64]);
             }
-            lines.push([0.0, (x*32) as f64, WIDTH as f64 * CELL_SIZE, (x*32) as f64]);
+            lines.push([0.0, x as f64 * CELL_SIZE, WIDTH as f64 * CELL_SIZE, x as f64 * CELL_SIZE]);
         }
 
-        let mut text = graphics::Text::new(22);
+        let mut text = graphics::Text::new(16);
         text.color = [1.0, 1.0, 1.0, 1.0];
 
         self.gl.draw(args.viewport(), |c, gl| {
-            let text_transform: graphics::context::Context= c.trans(400.0, 100.0);
+            let matrix_transform: graphics::context::Context = c.trans(args.width as f64/4.0, 0.0);
+            let text_transform: graphics::context::Context = c.trans(10.0, 100.0);
 
             clear([0.1, 0.1, 0.1, 1.0], gl);
 
             for l in lines {
-                line(GREEN, 0.5, l, c.transform, gl);
+                line(GREEN, 0.5, l, matrix_transform.transform, gl);
             }
             for col in columns {
-                line(GREEN, 0.5, col, c.transform, gl);
+                line(GREEN, 0.5, col, matrix_transform.transform, gl);
             }
 
-            matrix.draw(c, gl);
-            let mut text_string = format!("Lines: {} ", matrix.cleared);
+            matrix.draw(matrix_transform, gl);
+            let mut text_string = format!("{} ", matrix.cleared);
             text.draw(&text_string, use_cache, &c.draw_state, text_transform.transform, gl);
-            piece.draw_next(c, gl);
-            piece.draw_held(c, gl);
-            piece.draw_ghost(matrix, c, gl);
-            piece.draw(c, gl);
+            piece.draw_next(matrix_transform, gl);
+            piece.draw_held(matrix_transform, gl);
+            piece.draw_ghost(matrix, matrix_transform, gl);
+            piece.draw(matrix_transform, gl);
         });
     }
 
